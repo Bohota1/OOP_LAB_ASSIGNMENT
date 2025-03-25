@@ -247,7 +247,7 @@ public class Flight extends FlightDistance {
      *
      * @return newly created flight schedule
      */
-    public String createNewFlightsAndTime() {
+   /* public String createNewFlightsAndTime() {
 
         Calendar c = Calendar.getInstance();
         // Incrementing nextFlightDay, so that next scheduled flight would be in the future, not in the present
