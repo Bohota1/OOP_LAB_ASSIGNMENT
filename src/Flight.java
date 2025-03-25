@@ -221,7 +221,7 @@ public class Flight extends FlightDistance {
         return (rad * 180.0 / Math.PI);
     }
 
-    public void displayFlightSchedule() {
+    /*public void displayFlightSchedule() {
 
         Iterator<Flight> flightIterator = flightList.iterator();
         System.out.println();
@@ -235,7 +235,7 @@ public class Flight extends FlightDistance {
             System.out.println(f1.toString(i));
             System.out.print("+------+-------------------------------------------+-----------+------------------+-----------------------+------------------------+---------------------------+-------------+--------+------------------------+\n");
         }
-    }
+    }*/
 
     @Override
     public String toString(int i) {
@@ -267,7 +267,7 @@ public class Flight extends FlightDistance {
      * @param datetime to be formatting
      * @return formatted LocalDateTime with minutes close to the nearest hour quarter
      */
-    public LocalDateTime getNearestHourQuarter(LocalDateTime datetime) {
+   /* public LocalDateTime getNearestHourQuarter(LocalDateTime datetime) {
         int minutes = datetime.getMinute();
         int mod = minutes % 15;
         LocalDateTime newDatetime;
@@ -278,7 +278,7 @@ public class Flight extends FlightDistance {
         }
         newDatetime = newDatetime.truncatedTo(ChronoUnit.MINUTES);
         return newDatetime;
-    }
+    }*/
 
 
     //        ************************************************************ Setters & Getters ************************************************************
