@@ -27,10 +27,11 @@ public class User {
     public static void main(String[] args) {
         int countNumOfUsers = 1;
         RolesAndPermissions r1 = new RolesAndPermissions();
-        Flight f1 = new Flight();
+        FlightManager f1 = new FlightManager();
         FlightReservation bookingAndReserving = new FlightReservation();
         Customer c1 = new Customer();
         f1.flightScheduler();
+        CustomerService customerService = new CustomerService(c1);
         Scanner read = new Scanner(System.in);
 
 
@@ -76,7 +77,7 @@ public class User {
                     System.out.println(
                             "You've standard/default privileges to access the data... You can just view customers data..."
                                     + "Can't perform any actions on them....");
-                    c1.displayCustomersData(true);
+                    customerService.displayCustomersData(true);
                 } else {
                     System.out.printf(
                             "%-20sLogged in Successfully as \"%s\"..... For further Proceedings, enter a value from below....",
@@ -105,19 +106,20 @@ public class User {
                         desiredOption = read.nextInt();
                         /* If 1 is entered by the privileged user, then add a new customer...... */
                         if (desiredOption == 1) {
+                            Customer customer = readCustomerData();
 
-                            c1.addNewCustomer();
+                            customerService.addNewCustomer(customer);
                         } else if (desiredOption == 2) {
                             /*
                              * If 2 is entered by the privileged user, then call the search method of the
                              * Customer class
                              */
 
-                            c1.displayCustomersData(false);
+                            customerService.displayCustomersData(false);
                             System.out.print("Enter the CustomerID to Search :\t");
                             String customerID = read1.nextLine();
                             System.out.println();
-                            c1.searchUser(customerID);
+                            customerService.searchUser(customerID);
                         } else if (desiredOption == 3) {
                             /*
                              * If 3 is entered by the user, then call the update method of the Customer
@@ -125,11 +127,12 @@ public class User {
                              * arguments.....
                              */
 
-                            c1.displayCustomersData(false);
+                            customerService.displayCustomersData(false);
                             System.out.print("Enter the CustomerID to Update its Data :\t");
                             String customerID = read1.nextLine();
                             if (customersCollection.size() > 0) {
-                                c1.editUserInfo(customerID);
+                                List<String> details = readCustomerInfo();
+                                customerService.editUserInfo(customerID,details);
                             } else {
                                 System.out.printf("%-50sNo Customer with the ID %s Found...!!!\n", " ", customerID);
                             }
@@ -139,19 +142,19 @@ public class User {
                              * If 4 is entered, then ask the user to enter the customer id, and then delete
                              * that customer....
                              */
-                            c1.displayCustomersData(false);
+                            customerService.displayCustomersData(false);
                             System.out.print("Enter the CustomerID to Delete its Data :\t");
                             String customerID = read1.nextLine();
                             if (customersCollection.size() > 0) {
-                                c1.deleteUser(customerID);
+                                customerService.deleteUser(customerID);
                             } else {
                                 System.out.printf("%-50sNo Customer with the ID %s Found...!!!\n", " ", customerID);
                             }
                         } else if (desiredOption == 5) {
                             /* Call the Display Method of Customer Class.... */
-                            c1.displayCustomersData(false);
+                            customerService.displayCustomersData(false);
                         } else if (desiredOption == 6) {
-                            c1.displayCustomersData(false);
+                            customerService.displayCustomersData(false);
                             System.out.print(
                                     "\n\nEnter the ID of the user to display all flights registered by that user...");
                             String id = read1.nextLine();
@@ -254,14 +257,14 @@ public class User {
                             }
                             bookingAndReserving.bookFlight(flightToBeBooked, numOfTickets, result[1]);
                         } else if (desiredChoice == 2) {
-
-                            c1.editUserInfo(result[1]);
+                            List<String> details = readCustomerInfo();
+                            customerService.editUserInfo(result[1],details);
                         } else if (desiredChoice == 3) {
                             System.out.print(
                                     "Are you sure to delete your account...It's an irreversible action...Enter Y/y to confirm...");
                             char confirmationChar = read1.nextLine().charAt(0);
                             if (confirmationChar == 'Y' || confirmationChar == 'y') {
-                                c1.deleteUser(result[1]);
+                                customerService.deleteUser(result[1]);
                                 System.out.printf("User %s's account deleted Successfully...!!!", userName);
                                 desiredChoice = 0;
                             } else {
@@ -270,7 +273,7 @@ public class User {
                         } else if (desiredChoice == 4) {
 
                             f1.displayFlightSchedule();
-                            f1.displayMeasurementInstructions();
+                            displayMeasurementInstructions();
                         } else if (desiredChoice == 5) {
 
                             bookingAndReserving.cancelFlight(result[1]);
@@ -293,8 +296,8 @@ public class User {
                             "");
                 }
             } else if (desiredOption == 4) {
-
-                c1.addNewCustomer();
+                Customer customer = readCustomerData();
+                customerService.addNewCustomer(customer);
             } else if (desiredOption == 5) {
                 manualInstructions();
             }
@@ -381,7 +384,73 @@ public class User {
     // Getters ************************************************************
 
     public static List<Customer> getCustomersCollection() {
-
         return customersCollection;
+    }
+    public static Customer readCustomerData()
+    {
+        System.out.printf("\n\n\n%60s ++++++++++++++ Welcome to the Customer Registration Portal ++++++++++++++", "");
+        Scanner read = new Scanner(System.in);
+        System.out.print("\nEnter your name :\t");
+        String name = read.nextLine();
+        System.out.print("Enter your email address :\t");
+        String email = read.nextLine();
+        while (isUniqueData(email)) {
+            System.out.println(
+                    "ERROR!!! User with the same email already exists... Use new email or login using the previous credentials....");
+            System.out.print("Enter your email address :\t");
+            email = read.nextLine();
+        }
+        System.out.print("Enter your Password :\t");
+        String password = read.nextLine();
+        System.out.print("Enter your Phone number :\t");
+        String phone = read.nextLine();
+        System.out.print("Enter your address :\t");
+        String address = read.nextLine();
+        System.out.print("Enter your age :\t");
+        int age = read.nextInt();
+        return new Customer(name, email, password, phone, address, age);
+    }
+    public static boolean isUniqueData(String emailID) {
+        boolean isUnique = false;
+        for (Customer c : customersCollection) {
+            if (emailID.equals(c.getEmail())) {
+                isUnique = true;
+                break;
+            }
+        }
+        return isUnique;
+    }
+    public static List<String> readCustomerInfo() {
+        Scanner read = new Scanner(System.in);
+        List<String> details = new ArrayList<>();
+
+        System.out.print("\nEnter the new name of the Passenger:\t");
+        details.add(read.nextLine());
+
+        System.out.print("Enter the new email address:\t");
+        details.add(read.nextLine());
+
+        System.out.print("Enter the new Phone number:\t");
+        details.add(read.nextLine());
+
+        System.out.print("Enter the new address:\t");
+        details.add(read.nextLine());
+
+        System.out.print("Enter the new age:\t");
+        details.add(String.valueOf(read.nextInt()));
+
+        read.nextLine(); // Consume leftover newline
+        return details;
+    }
+
+    public static void displayMeasurementInstructions(){
+        String symbols = "+---------------------------+";
+        System.out.printf("\n\n %100s\n %100s", symbols, "| SOME IMPORTANT GUIDELINES |");
+        System.out.printf("\n %100s\n", symbols);
+        System.out.println("\n\t\t1. Distance between the destinations are based upon the Airports Coordinates(Latitudes && Longitudes) based in those cities\n");
+        System.out.println("\t\t2. Actual Distance of the flight may vary from this approximation as Airlines may define their on Travel Policy that may restrict the planes to fly through specific regions...\n");
+        System.out.println("\t\t3. Flight Time depends upon several factors such as Ground Speed(GS), AirCraft Design, Flight Altitude and Weather. Ground Speed for these calculations is 450 Knots...\n");
+        System.out.println("\t\t4. Expect reaching your destination early or late from the Arrival Time. So, please keep a margin of ±1 hour...\n");
+        System.out.println("\t\t5. The departure time is the moment that your plane pushes back from the gate, not the time it takes off. The arrival time is the moment that your plane pulls into the gate, not the time\n\t\t   it touches down on the runway...\n");
     }
 }
