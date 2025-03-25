@@ -80,7 +80,7 @@ public class Flight extends FlightDistance {
      *
      * @param customer customer to be registered
      */
-    void addNewCustomerToFlight(Customer customer) {
+   /* void addNewCustomerToFlight(Customer customer) {
         this.listOfRegisteredCustomersInAFlight.add(customer);
     }
 
@@ -90,7 +90,7 @@ public class Flight extends FlightDistance {
      * @param customer     customer in which tickets are to be added
      * @param numOfTickets number of tickets to add
      */
-    void addTicketsToExistingCustomer(Customer customer, int numOfTickets) {
+   /* void addTicketsToExistingCustomer(Customer customer, int numOfTickets) {
         customer.addExistingFlightToCustomerList(customerIndex, numOfTickets);
     }
 
